@@ -41,7 +41,9 @@ class ModelLoader:
         current_meta_path = os.path.join(models_base_dir, "current", "metadata.json")
 
         hourly_model_path = os.path.join(models_base_dir, "hourly", "model.pkl")
-        hourly_scaler_path = os.path.join(models_base_dir, "hourly", "scaler.pkl")
+        hourly_scaler_path = os.path.join(models_base_dir, "forecasting_scaler.pkl")
+        if not os.path.exists(hourly_scaler_path):
+            hourly_scaler_path = os.path.join(models_base_dir, "hourly", "scaler.pkl")
         hourly_meta_path = os.path.join(models_base_dir, "hourly", "metadata.json")
 
         daily_model_path = os.path.join(models_base_dir, "daily", "model.pkl")
@@ -57,9 +59,11 @@ class ModelLoader:
         self.hourly_scaler = self._load_file(hourly_scaler_path, "Hourly Forecasting Scaler")
         self.hourly_meta = self._load_json(hourly_meta_path, "Hourly Forecasting Metadata")
 
-        # 3. Load Daily Model Assets (Cached to avoid repeated slow disk loads on endpoint hits)
+        # 3. Load Daily Model Assets
         self.daily_model = self._load_file(daily_model_path, "Daily Forecasting Model")
         self.daily_scaler = self._load_file(daily_scaler_path, "Daily Forecasting Scaler")
+        daily_meta_path = os.path.join(models_base_dir, "daily", "metadata.json")
+        self.daily_meta = self._load_json(daily_meta_path, "Daily Forecasting Metadata")
 
         # Validation Checks
         self._validate_assets()
@@ -124,6 +128,9 @@ class ModelLoader:
 
     def get_daily_scaler(self):
         return self.daily_scaler
+
+    def get_daily_features(self) -> list:
+        return self.daily_meta.get("features", [])
 
 # Expose a global loader instance
 model_loader = ModelLoader()

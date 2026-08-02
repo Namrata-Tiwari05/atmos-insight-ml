@@ -1,30 +1,65 @@
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
+# ==========================================
+# Atmos Insight — Production Git Ignore Policy
+# ==========================================
 
-# Environment
+# Environment & Secrets
 .env
 .env.*
-backend/.env
-backend/app/config/.env
+!.env.example
 
-# Jupyter
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .ipynb_checkpoints/
 
-# Node
+# Node & Package Managers
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build Outputs
 dist/
 build/
-frontend/aura-air-insights/node_modules/
-frontend/aura-air-insights/dist/
+coverage/
 
-# VS Code
+# IDE & Editor Files
 .vscode/
+.idea/
+*.swp
+*.swo
 
-# OS
+# Operating System Files
 .DS_Store
 Thumbs.db
-.gemini/
-.agents/
+desktop.ini
+
+# Logs & Temporary Files
+logs/
+*.log
+tmp/
+temp/
+.cache/
+
+# ML Experiment Logs
+training_logs/
+wandb/
+mlruns/
+tensorboard/
+
+# IMPORTANT: NEVER IGNORE ML MODELS OR STATIC ASSETS
+!models/**/*.pkl
+!models/**/*.json
+!backend/app/static/**
+!frontend/public/**
+!artifacts/shap/**

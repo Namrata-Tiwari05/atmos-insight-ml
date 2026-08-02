@@ -1,0 +1,32 @@
+[
+  {
+    "feature": "AQI",
+    "importance": 254.5397,
+    "percentage": 94.6,
+    "description": "Current AQI Observation"
+  },
+  {
+    "feature": "temperature_2m (\u00b0C)",
+    "importance": 3.5412,
+    "percentage": 1.32,
+    "description": "temperature_2m (\u00b0C) Model Feature"
+  },
+  {
+    "feature": "aqi_roll_min_12",
+    "importance": 2.7257,
+    "percentage": 1.01,
+    "description": "12-Hour Minimum AQI Level"
+  },
+  {
+    "feature": "Hour",
+    "importance": 1.7781,
+    "percentage": 0.66,
+    "description": "Hour of Day (0\u201323)"
+  },
+  {
+    "feature": "aqi_roll_mean_24",
+    "importance": 1.2889,
+    "percentage": 0.48,
+    "description": "aqi_roll_mean_24 Model Feature"
+  }
+]

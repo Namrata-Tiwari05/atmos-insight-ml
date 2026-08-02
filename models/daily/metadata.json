@@ -1,21 +1,23 @@
 {
-    "best_model_name": "Random Forest",
-    "features": [
-        "pm2.5",
-        "pm10",
-        "O3",
-        "NO2",
-        "SO2",
-        "co",
-        "Month",
-        "DayOfWeek",
-        "IsWeekend",
-        "season_Autumn",
-        "season_Monsoon",
-        "season_Spring",
-        "season_Summer",
-        "season_Winter"
-    ],
-    "training_date": "2026-07-07 19:05:36",
-    "project_version": "1.1.0"
+  "model_type": "XGBRegressor",
+  "horizon": "7-Day Daily Recursive Forecast",
+  "features": [
+    "AQI_lag1",
+    "AQI_lag2",
+    "AQI_lag3",
+    "AQI_lag7",
+    "AQI_roll_mean_3",
+    "AQI_roll_mean_7",
+    "AQI_roll_std_7",
+    "pm2.5_lag1",
+    "pm10_lag1",
+    "Month",
+    "DayOfWeek",
+    "DayOfYear",
+    "season_Autumn",
+    "season_Monsoon",
+    "season_Spring",
+    "season_Summer",
+    "season_Winter"
+  ]
 }

@@ -1,21 +1,10 @@
-@import "tailwindcss" source(none);
-@source "../src";
+@import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Design system definition.
- *
- * The @theme inline block maps CSS custom properties to Tailwind utility
- * classes (e.g. --color-primary -> bg-primary, text-primary).
- *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Design system definition — Atmos Insight Deep Navy Dark Theme
  */
 
 @theme inline {
@@ -74,68 +63,24 @@
 
 :root {
   --radius: 0.875rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.18 0.02 240);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.02 240);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.02 240);
-  --primary: oklch(0.68 0.16 160);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.97 0.01 200);
-  --secondary-foreground: oklch(0.22 0.02 240);
-  --muted: oklch(0.975 0.006 240);
-  --muted-foreground: oklch(0.5 0.02 240);
-  --accent: oklch(0.94 0.05 180);
-  --accent-foreground: oklch(0.22 0.03 200);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.93 0.008 220);
-  --input: oklch(0.93 0.008 220);
-  --ring: oklch(0.68 0.16 160);
-  --chart-1: oklch(0.68 0.16 160);
-  --chart-2: oklch(0.7 0.12 200);
-  --chart-3: oklch(0.7 0.14 230);
-  --chart-4: oklch(0.8 0.16 90);
-  --chart-5: oklch(0.7 0.18 30);
-  --brand: oklch(0.68 0.16 160);
-  --brand-teal: oklch(0.7 0.11 200);
-  --brand-sky: oklch(0.78 0.09 230);
-  --aqi-good: oklch(0.72 0.18 145);
-  --aqi-satisfactory: oklch(0.82 0.18 125);
-  --aqi-moderate: oklch(0.86 0.17 95);
-  --aqi-poor: oklch(0.72 0.18 55);
-  --aqi-very-poor: oklch(0.62 0.22 25);
-  --aqi-severe: oklch(0.5 0.22 310);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
-}
-
-.dark {
-  --background: oklch(0.14 0.02 240);
-  --foreground: oklch(0.97 0.005 240);
-  --card: oklch(0.215 0.02 240);
-  --card-foreground: oklch(0.97 0.005 240);
-  --popover: oklch(0.23 0.02 240);
-  --popover-foreground: oklch(0.97 0.005 240);
+  --background: #030712;
+  --foreground: #F8FAFC;
+  --card: #091322;
+  --card-foreground: #F8FAFC;
+  --popover: #091322;
+  --popover-foreground: #F8FAFC;
   --primary: oklch(0.77 0.18 160);
-  --primary-foreground: oklch(0.12 0.03 200);
-  --secondary: oklch(0.28 0.025 240);
-  --secondary-foreground: oklch(0.97 0.005 240);
-  --muted: oklch(0.26 0.02 240);
-  --muted-foreground: oklch(0.8 0.02 240);
-  --accent: oklch(0.32 0.05 200);
-  --accent-foreground: oklch(0.97 0.005 240);
+  --primary-foreground: #020617;
+  --secondary: #0A172C;
+  --secondary-foreground: #F8FAFC;
+  --muted: #0A172C;
+  --muted-foreground: #94A3B8;
+  --accent: #0A172C;
+  --accent-foreground: #F8FAFC;
   --destructive: oklch(0.68 0.22 25);
-  --destructive-foreground: oklch(0.97 0.005 240);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 14%);
+  --destructive-foreground: #F8FAFC;
+  --border: rgba(24, 48, 100, 0.40);
+  --input: rgba(24, 48, 100, 0.50);
   --ring: oklch(0.77 0.18 160);
   --chart-1: oklch(0.82 0.18 160);
   --chart-2: oklch(0.82 0.14 200);
@@ -151,14 +96,15 @@
   --aqi-poor: oklch(0.8 0.18 55);
   --aqi-very-poor: oklch(0.72 0.22 25);
   --aqi-severe: oklch(0.7 0.22 310);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --sidebar: #091322;
+  --sidebar-foreground: #F8FAFC;
+  --sidebar-accent: #0A172C;
+  --sidebar-border: rgba(24, 48, 100, 0.40);
+}
+
+.dark {
+  --background: #030712;
+  --foreground: #F8FAFC;
 }
 
 @layer base {
@@ -166,26 +112,256 @@
     border-color: var(--color-border);
   }
 
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+  html, body {
+    background-color: #030712;
+    color: #F8FAFC;
     font-family: var(--font-sans);
     font-feature-settings: "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
 }
 
+/* ---------- Advanced Navy Glassmorphism & Hover Utilities ---------- */
 @utility glass-card {
-  background: color-mix(in oklab, var(--card) 70%, transparent);
-  backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid color-mix(in oklab, var(--card-foreground) 12%, var(--border) 60%);
-  box-shadow: 0 1px 0 color-mix(in oklab, var(--card-foreground) 6%, transparent) inset, 0 20px 40px -24px rgba(16,185,129,0.25);
+  background: rgba(9, 19, 34, 0.88);
+  backdrop-filter: blur(24px) saturate(170%);
+  border: 1px solid rgba(40, 80, 150, 0.45);
+  box-shadow: 0 14px 36px -10px rgba(0, 0, 0, 0.75), 0 0 25px -5px rgba(14, 165, 233, 0.15);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@utility mesh-bg {
-  background:
-    radial-gradient(60% 50% at 15% 10%, color-mix(in oklab, var(--brand) 22%, transparent), transparent 70%),
-    radial-gradient(50% 40% at 90% 0%, color-mix(in oklab, var(--brand-sky) 30%, transparent), transparent 70%),
-    radial-gradient(40% 40% at 80% 90%, color-mix(in oklab, var(--brand-teal) 25%, transparent), transparent 70%),
-    var(--background);
+@utility glass-card-hover {
+  &:hover {
+    border-color: rgba(56, 189, 248, 0.50);
+    box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.85), 0 0 35px 2px rgba(56, 189, 248, 0.22);
+    transform: translateY(-3px);
+  }
+}
+
+@utility inner-pill {
+  background: rgba(10, 23, 44, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(30, 60, 115, 0.55);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+@utility glass-pill {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+@utility glow-emerald {
+  box-shadow: 0 0 40px -5px rgba(52, 211, 153, 0.35);
+}
+
+@utility glow-sky {
+  box-shadow: 0 0 40px -5px rgba(56, 189, 248, 0.35);
+}
+
+@utility text-gradient {
+  background: linear-gradient(135deg, #F8FAFC 0%, #CBD5E1 50%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility text-gradient-emerald {
+  background: linear-gradient(135deg, #34D399 0%, #38BDF8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Atmospheric Animations */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; filter: blur(40px); }
+  50% { opacity: 0.75; filter: blur(55px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 6s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Living Atmospheric Background System Classes & Animations */
+.atmos-layer1-bg {
+  background: radial-gradient(circle at 50% 20%, #081730 0%, #040D1B 45%, #030712 100%);
+}
+
+.atmos-blob-1 {
+  animation: blobFloat1 18s ease-in-out infinite alternate;
+}
+.atmos-blob-2 {
+  animation: blobFloat2 22s ease-in-out infinite alternate;
+}
+.atmos-blob-3 {
+  animation: blobFloat3 20s ease-in-out infinite alternate;
+}
+.atmos-blob-4 {
+  animation: blobFloat1 25s ease-in-out infinite alternate-reverse;
+}
+.atmos-blob-5 {
+  animation: blobFloat2 19s ease-in-out infinite alternate;
+}
+.atmos-blob-6 {
+  animation: blobFloat3 24s ease-in-out infinite alternate-reverse;
+}
+
+.atmos-aurora-1 {
+  animation: auroraPulse1 16s ease-in-out infinite alternate;
+}
+.atmos-aurora-2 {
+  animation: auroraPulse2 20s ease-in-out infinite alternate;
+}
+.atmos-aurora-3 {
+  animation: auroraPulse1 18s ease-in-out infinite alternate-reverse;
+}
+
+.atmos-cloud-drift-right {
+  animation: cloudDriftRight linear infinite;
+}
+.atmos-cloud-drift-left {
+  animation: cloudDriftLeft linear infinite;
+}
+.atmos-cloud-drift-diag {
+  animation: cloudDriftDiag linear infinite;
+}
+
+.atmos-wind-flow {
+  animation: windFlow linear infinite;
+}
+
+.atmos-fog-drift-1 {
+  animation: fogDrift1 24s ease-in-out infinite alternate;
+}
+.atmos-fog-drift-2 {
+  animation: fogDrift2 28s ease-in-out infinite alternate;
+}
+
+.atmos-hero-glow {
+  animation: heroGlowPulse 10s ease-in-out infinite alternate;
+}
+
+.atmos-ray-1 {
+  animation: rayPulse1 12s ease-in-out infinite alternate;
+}
+.atmos-ray-2 {
+  animation: rayPulse2 15s ease-in-out infinite alternate;
+}
+.atmos-ray-3 {
+  animation: rayPulse1 14s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes blobFloat1 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(45px, -30px) scale(1.08); }
+  100% { transform: translate(-25px, 20px) scale(0.95); }
+}
+
+@keyframes blobFloat2 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(-50px, 35px) scale(1.06); }
+  100% { transform: translate(30px, -25px) scale(0.97); }
+}
+
+@keyframes blobFloat3 {
+  0% { transform: translate(0px, 0px) scale(1); }
+  50% { transform: translate(35px, 45px) scale(1.05); }
+  100% { transform: translate(-40px, -30px) scale(0.96); }
+}
+
+@keyframes auroraPulse1 {
+  0% { opacity: 0.15; transform: scale(1) rotate(0deg); filter: blur(180px); }
+  50% { opacity: 0.35; transform: scale(1.12) rotate(3deg); filter: blur(160px); }
+  100% { opacity: 0.20; transform: scale(0.95) rotate(-2deg); filter: blur(190px); }
+}
+
+@keyframes auroraPulse2 {
+  0% { opacity: 0.18; transform: scale(1) rotate(0deg); filter: blur(200px); }
+  50% { opacity: 0.32; transform: scale(1.10) rotate(-4deg); filter: blur(170px); }
+  100% { opacity: 0.22; transform: scale(0.96) rotate(2deg); filter: blur(210px); }
+}
+
+@keyframes cloudDriftRight {
+  0% { transform: translateX(-60vw); }
+  100% { transform: translateX(110vw); }
+}
+
+@keyframes cloudDriftLeft {
+  0% { transform: translateX(110vw); }
+  100% { transform: translateX(-60vw); }
+}
+
+@keyframes cloudDriftDiag {
+  0% { transform: translate(-60vw, -30px); }
+  100% { transform: translate(110vw, 30px); }
+}
+
+@keyframes windFlow {
+  0% { stroke-dashoffset: 1200; }
+  100% { stroke-dashoffset: -1200; }
+}
+
+@keyframes fogDrift1 {
+  0% { transform: translateX(-80px) scale(1); opacity: 0.12; }
+  50% { transform: translateX(80px) scale(1.08); opacity: 0.25; }
+  100% { transform: translateX(-40px) scale(0.96); opacity: 0.15; }
+}
+
+@keyframes fogDrift2 {
+  0% { transform: translateX(90px) scale(1.02); opacity: 0.14; }
+  50% { transform: translateX(-70px) scale(0.95); opacity: 0.28; }
+  100% { transform: translateX(30px) scale(1.05); opacity: 0.18; }
+}
+
+@keyframes heroGlowPulse {
+  0% { opacity: 0.5; transform: scale(1) translateX(-50%); }
+  50% { opacity: 0.85; transform: scale(1.1) translateX(-50%); }
+  100% { opacity: 0.6; transform: scale(0.98) translateX(-50%); }
+}
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50% { opacity: 0.95; transform: scale(1.25); }
+}
+
+.animate-aurora-pulse-1 {
+  animation: auroraPulse1 18s ease-in-out infinite alternate;
+}
+.animate-aurora-pulse-2 {
+  animation: auroraPulse2 22s ease-in-out infinite alternate;
+}
+.animate-hero-glow-pulse {
+  animation: heroGlowPulse 12s ease-in-out infinite alternate;
+}
+.animate-cloud-drift-right {
+  animation: cloudDriftRight linear infinite;
+}
+.animate-cloud-drift-left {
+  animation: cloudDriftLeft linear infinite;
+}
+.animate-star-twinkle {
+  animation: starTwinkle ease-in-out infinite alternate;
+}
+.animate-wind-flow {
+  animation: windFlow linear infinite;
 }

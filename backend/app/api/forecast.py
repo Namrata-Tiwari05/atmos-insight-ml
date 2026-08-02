@@ -2,12 +2,14 @@ import time
 import joblib
 import os
 import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Query, HTTPException, status
 from app.services.weather_service import get_live_weather
 from app.services.air_quality_service import get_live_pollutants
 from app.services.prediction_service import predict_current_aqi, get_aqi_category_and_advisory
-from app.services.forecast_service import forecast_next_24_hours
+from app.services.forecast_service import forecast_next_24_hours, forecast_next_7_days
+from app.services.geocoding_service import reverse_geocode
 from app.ml.model_loader import model_loader
 from app.core.logging import get_logger
 
@@ -16,48 +18,58 @@ logger = get_logger("forecast_router")
 router = APIRouter(prefix="/forecast", tags=["Inference Engine"])
 
 @router.get("/24-hour", status_code=status.HTTP_200_OK)
-def get_24_hour_forecast():
+def get_24_hour_forecast(
+    lat: float | None = Query(None, description="Latitude"),
+    lon: float | None = Query(None, description="Longitude"),
+    city: str | None = Query(None, description="City Name")
+):
     """
-    Fetches live weather and pollutants, runs the current model, and recursively forecasts
+    Fetches live weather and pollutants for specified location, runs current model, and recursively forecasts
     AQI for the next 24 hours using the XGBoost model.
     """
-    logger.info("Incoming GET request to /api/forecast/24-hour")
+    logger.info(f"Incoming GET request to /api/forecast/24-hour (lat={lat}, lon={lon}, city={city})")
     start_time = time.time()
-    
+
     try:
-        # 1. Fetch live API data
-        weather_data = get_live_weather()
-        pollution_data = get_live_pollutants()
-        
+        if lat is not None and lon is not None:
+            weather_data = get_live_weather(lat=lat, lon=lon)
+            pollution_data = get_live_pollutants(lat=lat, lon=lon)
+            location_name = city if city else reverse_geocode(lat, lon)["name"]
+        else:
+            weather_data = get_live_weather()
+            pollution_data = get_live_pollutants()
+            location_name = city if city else "Kanpur"
+
         # 2. Get current AQI baseline
         current_pred = predict_current_aqi(pollution_data)
         current_aqi = current_pred["predicted_aqi"]
-        
-        # 3. Compute 24-hour forecast
-        forecast_data = forecast_next_24_hours(current_aqi, weather_data)
-        
-        # 4. Add CPCB Categories to each hourly predicted step
+
+        # 3. Compute 24-hour forecast with location
+        forecast_data = forecast_next_24_hours(current_aqi, weather_data, lat=lat, lon=lon)
+
         augmented_forecast = []
         for step in forecast_data["forecast"]:
             step_aqi = step["predicted_aqi"]
             category, _ = get_aqi_category_and_advisory(step_aqi)
             augmented_forecast.append({
                 "hour": step["hour"],
+                "timestamp": step["timestamp"],
                 "predicted_aqi": step_aqi,
                 "category": category
             })
-            
+
         response = {
             "generated_at": datetime.now().isoformat(),
-            "location": "Kanpur",
-            "current_aqi": current_aqi,
+            "location": location_name,
+            "current_aqi": round(current_aqi, 2),
             "forecast": augmented_forecast,
+            "execution_time_seconds": forecast_data["execution_time_seconds"],
             "latency_ms": round((time.time() - start_time) * 1000.0, 2)
         }
-        
-        logger.info(f"Successfully processed GET /forecast/24-hour in {response['latency_ms']:.2f} ms.")
+
+        logger.info(f"Successfully processed GET /forecast/24-hour for {location_name} in {response['latency_ms']:.2f} ms.")
         return response
-        
+
     except Exception as e:
         logger.error(f"Failed to generate 24-hour forecast: {str(e)}")
         raise HTTPException(
@@ -65,87 +77,59 @@ def get_24_hour_forecast():
             detail=f"Forecasting engine encountered an unexpected error: {str(e)}"
         )
 
+
 @router.get("/7-day", status_code=status.HTTP_200_OK)
-def get_7_day_forecast():
+def get_7_day_forecast(
+    lat: float | None = Query(None, description="Latitude"),
+    lon: float | None = Query(None, description="Longitude"),
+    city: str | None = Query(None, description="City Name")
+):
     """
-    Exposes the 7-day daily forecasting model (Notebook 06) using daily pollutant values.
+    Exposes the retrained 7-day daily forecasting model with CPCB categories and validation metrics.
     """
-    logger.info("Incoming GET request to /api/forecast/7-day")
+    logger.info(f"Incoming GET request to /api/forecast/7-day (lat={lat}, lon={lon}, city={city})")
     start_time = time.time()
-    
-    # Locate daily model paths
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-    daily_model_path = os.path.join(project_root, "models", "daily", "model.pkl")
-    daily_scaler_path = os.path.join(project_root, "models", "daily", "scaler.pkl")
-    
-    if not os.path.exists(daily_model_path):
-        # Fallback to local
-        daily_model_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../models/daily/model.pkl")
-        daily_scaler_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../../models/daily/scaler.pkl")
-        
+
     try:
-        # Load daily model & scaler from cached singleton loader
-        d_model = model_loader.get_daily_model()
-        d_scaler = model_loader.get_daily_scaler()
-        
-        # Fetch current pollution baseline
-        pollution_data = get_live_pollutants()
-        
-        # Scale CO from ug/m3 to mg/m3
-        co_mg = pollution_data["CO"] / 1000.0 if "CO" in pollution_data else pollution_data.get("co", 0.0)
-        
-        now = datetime.now()
-        
-        daily_forecast = []
-        # Build 7-day projections recursively or independently by updating seasonal/temporal features
-        for d in range(1, 8):
-            target_date = now + timedelta(days=d)
-            month = target_date.month
-            day_of_week = target_date.weekday()
-            is_weekend = 1 if day_of_week >= 5 else 0
-            
-            features_dict = {
-                "pm2.5": pollution_data.get("pm2_5", 0.0),
-                "pm10": pollution_data.get("pm10", 0.0),
-                "O3": pollution_data.get("O3", 0.0),
-                "NO2": pollution_data.get("NO2", 0.0),
-                "SO2": pollution_data.get("SO2", 0.0),
-                "co": co_mg,
-                "Month": month,
-                "DayOfWeek": day_of_week,
-                "IsWeekend": is_weekend,
-                "season_Autumn": 0,
-                "season_Monsoon": 1 if month in [6, 7, 8, 9] else 0,
-                "season_Spring": 0,
-                "season_Summer": 1 if month in [3, 4, 5] else 0,
-                "season_Winter": 1 if month in [10, 11, 12, 1, 2] else 0
-            }
-            
-            # Align features order
-            df_in = pd.DataFrame([features_dict])[model_loader.get_current_features()]
-            # Scale
-            df_in[['pm2.5', 'co', 'O3', 'NO2', 'SO2']] = d_scaler.transform(df_in[['pm2.5', 'co', 'O3', 'NO2', 'SO2']])
-            
-            pred_val = d_model.predict(df_in)[0]
-            category, _ = get_aqi_category_and_advisory(pred_val)
-            
-            daily_forecast.append({
-                "day": d,
-                "date": target_date.strftime("%Y-%m-%d"),
-                "predicted_aqi": round(float(pred_val), 2),
+        weather_data = get_live_weather(lat=lat, lon=lon) if (lat is not None and lon is not None) else get_live_weather()
+        pollution_data = get_live_pollutants(lat=lat, lon=lon) if (lat is not None and lon is not None) else get_live_pollutants()
+        location_name = city if city else ("Kanpur" if lat is None else reverse_geocode(lat, lon)["name"])
+
+        current_aqi_res = predict_current_aqi(pollution_data)
+        curr_aqi = current_aqi_res.get("predicted_aqi", 100.0)
+
+        forecast_res = forecast_next_7_days(curr_aqi, weather_data=weather_data, pollutant_data=pollution_data)
+
+        augmented_forecast = []
+        for step in forecast_res["forecast"]:
+            step_aqi = step["predicted_aqi"]
+            category, _ = get_aqi_category_and_advisory(step_aqi)
+            augmented_forecast.append({
+                "day_index": step["day_index"],
+                "date": step["date"],
+                "day_name": step["day_name"],
+                "predicted_aqi": step_aqi,
                 "category": category
             })
-            
+
         response = {
             "generated_at": datetime.now().isoformat(),
-            "location": "Kanpur",
-            "forecast": daily_forecast,
+            "location": location_name,
+            "current_aqi": round(curr_aqi, 2),
+            "forecast": augmented_forecast,
+            "validation_metrics": {
+                "r2_score": 0.4312,
+                "mae": 30.79,
+                "rmse": 40.78,
+                "error_margin": "±40.8 AQI",
+                "confidence": "Moderate"
+            },
             "latency_ms": round((time.time() - start_time) * 1000.0, 2)
         }
-        
-        logger.info(f"Successfully processed GET /forecast/7-day in {response['latency_ms']:.2f} ms.")
+
+        logger.info(f"Successfully processed GET /forecast/7-day for {location_name} in {response['latency_ms']:.2f} ms.")
         return response
-        
+
     except Exception as e:
         logger.error(f"Failed to generate 7-day forecast: {str(e)}")
         raise HTTPException(

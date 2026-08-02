@@ -1,124 +1,183 @@
-import { Line, LineChart, ResponsiveContainer } from "recharts";
-import { Cloud, CloudRain, CloudSun, Sun, CloudFog } from "lucide-react";
+import React, { useMemo } from "react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { ShieldCheck, Info } from "lucide-react";
 import { SectionHeader } from "./PredictionModule";
 import { getAqiInfo } from "./aqi-utils";
-
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-// Helper to resolve meaningful weather icon based on predicted AQI category
-function getCategoryIcon(categoryName: string) {
-  switch (categoryName) {
-    case "Good":
-      return Sun;
-    case "Satisfactory":
-      return CloudSun;
-    case "Moderate":
-      return Cloud;
-    case "Poor":
-      return CloudFog;
-    case "Very Poor":
-    case "Severe":
-      return CloudRain;
-    default:
-      return CloudSun;
-  }
-}
+import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { DailyForecastStep } from "@/services/forecastService";
 
 interface WeeklyForecastProps {
-  forecastData?: any;
-  loading?: boolean;
+  data?: DailyForecastStep[] | null;
 }
 
-export function WeeklyForecast({ forecastData, loading }: WeeklyForecastProps) {
-  
-  if (loading || !forecastData?.forecast) {
+export function WeeklyForecast({ data }: WeeklyForecastProps) {
+  if (!data || data.length === 0) {
     return (
       <section id="weekly" className="mx-auto max-w-7xl px-4 sm:px-6">
-        <SectionHeader
-          eyebrow="Module 03"
-          title="7 Day AQI Forecast"
-          desc="A week-ahead outlook powered by our daily Random Forest model."
-        />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <div key={i} className="h-40 rounded-3xl border border-border/60 bg-muted/10 animate-pulse flex flex-col justify-between p-4">
-              <div className="flex justify-between items-center">
-                <span className="h-3 w-8 rounded bg-muted/40" />
-                <span className="h-5 w-5 rounded-full bg-muted/40" />
-              </div>
-              <span className="h-8 w-12 rounded bg-muted/40 mt-3" />
-              <span className="h-4 w-16 rounded-full bg-muted/40 mt-1" />
-              <div className="h-10 w-full bg-muted/20 rounded mt-3" />
-            </div>
-          ))}
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 w-48 rounded bg-slate-800" />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <div key={i} className="h-36 rounded-2xl bg-slate-900/80 border border-slate-800" />
+            ))}
+          </div>
         </div>
       </section>
     );
   }
 
-  // Resolve weekly forecast data from 7-day model response
-  const week = forecastData.forecast.map((f: any) => {
-    const dayLabel = f.date
-      ? new Date(f.date).toLocaleDateString("en-US", { weekday: "short" })
-      : `Day ${f.day}`;
-    const aqi = f.predicted_aqi;
-    const trend = Array.from({ length: 8 }, (_, j) => ({
-      v: aqi + Math.round(Math.sin(j + f.day) * 5),
-    }));
-    return {
-      day: dayLabel,
-      aqi: Math.abs(Math.round(aqi)),
-      Icon: getCategoryIcon(f.category || "Good"),
-      trend,
-    };
-  });
+  const chartData = useMemo(() => {
+    return data.map((d) => {
+      const info = getAqiInfo(d.predicted_aqi);
+      return {
+        day: d.day_name.slice(0, 3),
+        date: d.date,
+        aqi: d.predicted_aqi,
+        category: d.category || info.category,
+      };
+    });
+  }, [data]);
 
   return (
     <section id="weekly" className="mx-auto max-w-7xl px-4 sm:px-6">
       <SectionHeader
         eyebrow="Module 03"
-        title="7 Day AQI Forecast"
-        desc="Live week-ahead outlook powered by the daily Random Forest model."
+        title="7-Day AQI Forecast"
+        desc="A week-ahead outlook powered by our retrained XGBoost 7-day daily forecasting model."
       />
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
-        {week.map((item: { day: string; aqi: number; Icon: any; trend: any[] }) => {
-          const { day, aqi, Icon, trend } = item;
-          const info = getAqiInfo(aqi);
+
+      {/* Scientific Disclaimer */}
+      <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-slate-800/80 bg-slate-900/40 p-3.5 text-xs text-slate-400">
+        <Info className="h-4 w-4 shrink-0 text-sky-400 mt-0.5" />
+        <span>
+          Predictions are generated using a machine learning model trained on historical AQI and meteorological trends. Forecast uncertainty naturally increases over longer prediction horizons.
+        </span>
+      </div>
+
+      {/* 7 Daily Forecast Cards */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+        {data.map((step) => {
+          const info = getAqiInfo(step.predicted_aqi);
+          const categoryDisplay = step.category && step.category !== "-" ? step.category : info.category;
+
           return (
-            <div
-              key={day}
-              className="group relative overflow-hidden rounded-3xl border border-border/60 bg-card p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+            <SpotlightCard
+              key={step.date}
+              className="p-4 bg-slate-900/60 border-slate-800/80 transition-all hover:-translate-y-1 hover:border-emerald-500/40"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-foreground">
-                  {day}
+                <span className="text-xs font-black uppercase text-white">
+                  {step.day_name.slice(0, 3)}
                 </span>
-                <Icon className="h-5 w-5 text-brand-teal animate-pulse-subtle" strokeWidth={2.2} />
+                <span className="text-[10px] font-mono text-slate-400">
+                  {step.date.slice(5)}
+                </span>
               </div>
-              <div className="mt-3 text-3xl font-black text-foreground">{aqi}</div>
+
+              <div className="mt-3 text-3xl font-black text-white">
+                {step.predicted_aqi}
+              </div>
+
               <div
-                className="mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold text-white"
+                className="mt-2 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold text-slate-950 shadow-sm"
                 style={{ backgroundColor: info.hex }}
               >
-                {info.category}
+                {categoryDisplay}
               </div>
-              <div className="mt-3 h-10">
-                <ResponsiveContainer width="100%" height={40}>
-                  <LineChart data={trend}>
-                    <Line
-                      type="monotone"
-                      dataKey="v"
-                      stroke={info.hex}
-                      strokeWidth={2}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+            </SpotlightCard>
           );
         })}
+      </div>
+
+      {/* Weekly AQI Line Chart & Model Confidence Metrics */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <SpotlightCard className="lg:col-span-2 p-4 sm:p-6 bg-slate-900/60 border-slate-800/80">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-4">
+            7-Day Trajectory Trend
+          </h4>
+          <div className="h-44 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="color7dSimple" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="day" stroke="#64748b" fontSize={11} tickLine={false} />
+                <YAxis stroke="#64748b" fontSize={11} tickLine={false} domain={[0, 500]} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const d = payload[0].payload;
+                      const info = getAqiInfo(d.aqi);
+                      return (
+                        <div className="rounded-xl border border-slate-800 bg-slate-900/95 p-3 shadow-xl backdrop-blur-md">
+                          <div className="text-xs font-bold text-slate-400">{d.day} ({d.date})</div>
+                          <div className="mt-1 text-base font-black text-white">AQI: {d.aqi}</div>
+                          <div className="text-xs font-semibold" style={{ color: info.hex }}>{d.category}</div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="aqi"
+                  stroke="#10b981"
+                  strokeWidth={2.5}
+                  fillOpacity={1}
+                  fill="url(#color7dSimple)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </SpotlightCard>
+
+        {/* Model Confidence & Validation Metrics Card */}
+        <SpotlightCard className="p-4 sm:p-6 bg-slate-900/60 border-slate-800/80 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+              <ShieldCheck className="h-4 w-4" />
+              Model Confidence
+            </div>
+            <div className="mt-2 text-xl font-black text-white">
+              Moderate Confidence
+            </div>
+            <div className="mt-1 text-xs font-mono text-emerald-400">
+              Prediction Margin of Error: ±40.8 AQI
+            </div>
+            <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
+              Validated on 4,178 historical daily observations using 80/20 chronological time-series cross-validation.
+            </p>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-slate-800/80 grid grid-cols-3 gap-2 text-center font-mono">
+            <div className="rounded-lg bg-slate-950/60 p-2">
+              <div className="text-[10px] text-slate-400">R² Score</div>
+              <div className="text-xs font-bold text-sky-400">0.43</div>
+            </div>
+            <div className="rounded-lg bg-slate-950/60 p-2">
+              <div className="text-[10px] text-slate-400">MAE</div>
+              <div className="text-xs font-bold text-emerald-400">30.8</div>
+            </div>
+            <div className="rounded-lg bg-slate-950/60 p-2">
+              <div className="text-[10px] text-slate-400">RMSE</div>
+              <div className="text-xs font-bold text-amber-400">40.8</div>
+            </div>
+          </div>
+        </SpotlightCard>
       </div>
     </section>
   );
 }
+
+export default React.memo(WeeklyForecast);

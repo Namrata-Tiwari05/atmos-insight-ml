@@ -1,19 +1,14 @@
 import { defineConfig } from "vite";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
+import path from "path";
 
 export default defineConfig({
-  plugins: [
-    TanStackRouterVite(),
-    react(),
-    tsconfigPaths(),
-    tailwindcss(),
-  ],
+  plugins: [react(), tailwindcss(), tsconfigPaths()],
   resolve: {
     alias: {
-      "@": "/src",
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });

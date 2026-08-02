@@ -51,3 +51,45 @@ def forecast_next_hour(features_dict: dict) -> float:
     logger.info(f"Forecasted next hour AQI: {prediction:.2f} in {prediction_time:.4f} seconds.")
     
     return float(prediction)
+
+
+def forecast_next_day(features_dict: dict) -> float:
+    """
+    Validates, scales, and forecasts daily AQI using the trained 7-day XGBoost model.
+    """
+    if not model_loader.initialized:
+        model_loader.initialize()
+        
+    start_time = time.time()
+    
+    model = model_loader.get_daily_model()
+    scaler = model_loader.get_daily_scaler()
+    model_features = list(model.feature_names_in_)
+    scaler_features = list(scaler.feature_names_in_)
+    
+    missing = [f for f in model_features if f not in features_dict]
+    if missing:
+        logger.error(f"Inference Failure: Missing feature inputs for daily model: {missing}")
+        raise ValueError(f"Feature mismatch: Missing required inputs: {missing}")
+        
+    df_full = pd.DataFrame([features_dict])
+    df_scaler_in = df_full[scaler_features]
+    df_scaler_out = pd.DataFrame(scaler.transform(df_scaler_in), columns=scaler_features)
+
+    df_model_in = pd.DataFrame()
+    for col in model_features:
+        if col in scaler_features:
+            df_model_in[col] = df_scaler_out[col]
+        else:
+            df_model_in[col] = df_full[col]
+
+    try:
+        prediction = model.predict(df_model_in)[0]
+    except Exception as e:
+        logger.error(f"Daily model prediction execution failed: {str(e)}")
+        raise RuntimeError(f"Daily prediction execution failed: {str(e)}")
+        
+    prediction_time = time.time() - start_time
+    logger.info(f"Forecasted daily AQI: {prediction:.2f} in {prediction_time:.4f} seconds.")
+    
+    return float(prediction)

@@ -1,0 +1,19 @@
+[
+  "AQI_lag1",
+  "AQI_lag2",
+  "AQI_lag3",
+  "AQI_lag7",
+  "AQI_roll_mean_3",
+  "AQI_roll_mean_7",
+  "AQI_roll_std_7",
+  "pm2.5_lag1",
+  "pm10_lag1",
+  "Month",
+  "DayOfWeek",
+  "DayOfYear",
+  "season_Autumn",
+  "season_Monsoon",
+  "season_Spring",
+  "season_Summer",
+  "season_Winter"
+]

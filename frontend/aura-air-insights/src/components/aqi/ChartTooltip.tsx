@@ -1,10 +1,6 @@
 import type { TooltipProps } from "recharts";
 
-interface CustomTooltipProps extends TooltipProps<number, string> {
-  unit?: string;
-}
-
-export function ChartTooltip({ active, payload, label, unit }: CustomTooltipProps) {
+export function ChartTooltip({ active, payload, label }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null;
 
   return (
@@ -23,7 +19,7 @@ export function ChartTooltip({ active, payload, label, unit }: CustomTooltipProp
               style={{ backgroundColor: p.color || "var(--foreground)" }}
             />
             {p.name && <span className="text-muted-foreground">{p.name}:</span>}
-            <span>{p.value} {unit && <span className="text-[10px] text-muted-foreground ml-0.5">{unit}</span>}</span>
+            <span>{p.value}</span>
           </div>
         ))}
       </div>

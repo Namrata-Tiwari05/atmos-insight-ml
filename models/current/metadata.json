@@ -16,28 +16,28 @@
         "season_Summer",
         "season_Winter"
     ],
-    "training_parameters": "{'bootstrap': True, 'ccp_alpha': 0.0, 'criterion': 'squared_error', 'max_depth': None, 'max_features': 1.0, 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 1, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'monotonic_cst': None, 'n_estimators': 30, 'n_jobs': -1, 'oob_score': False, 'random_state': 42, 'verbose': 0, 'warm_start': False}",
+    "training_parameters": "{'bootstrap': True, 'ccp_alpha': 0.0, 'criterion': 'squared_error', 'max_depth': 8, 'max_features': 1.0, 'max_leaf_nodes': None, 'max_samples': None, 'min_impurity_decrease': 0.0, 'min_samples_leaf': 5, 'min_samples_split': 2, 'min_weight_fraction_leaf': 0.0, 'monotonic_cst': None, 'n_estimators': 100, 'n_jobs': -1, 'oob_score': False, 'random_state': 42, 'verbose': 0, 'warm_start': False}",
     "metrics": {
-        "MAE": 0.05709728867623615,
-        "MSE": 0.08464114832535886,
-        "RMSE": 0.2909315182742476,
-        "MAPE": 0.043813208612805805,
-        "R2": 0.9999868507201741,
-        "Adj_R2": 0.9999866264937215,
-        "MedAE": 0.0,
-        "ExpVar": 0.9999868513880136,
-        "MaxError": 5.0,
-        "TrainingTime": 0.08990073204040527,
-        "PredictionTime": 0.01883697509765625
+        "MAE": 0.9408798024421,
+        "MSE": 2.192989546816779,
+        "RMSE": 1.4808745884837038,
+        "MAPE": 0.7201704610580971,
+        "R2": 0.9996844799478033,
+        "Adj_R2": 0.9996793495404505,
+        "MedAE": 0.5700457819850193,
+        "ExpVar": 0.9996903301162406,
+        "MaxError": 11.081010343047147,
+        "TrainingTime": 0.20208311080932617,
+        "PredictionTime": 0.0287172794342041
     },
     "cv_metrics": {
-        "CV_Mean_MAE": 0.7431597845601463,
-        "CV_Std_MAE": 0.35946808853125095,
-        "CV_Mean_RMSE": 4.779476800164236,
-        "CV_Std_RMSE": 1.5414132470431214,
-        "CV_Mean_R2": 0.9964871902727527,
-        "CV_Std_R2": 0.002501162204791844
+        "CV_Mean_MAE": 11.40230507304309,
+        "CV_Std_MAE": 15.126944382714447,
+        "CV_Mean_RMSE": 19.505718172259975,
+        "CV_Std_RMSE": 18.391283580200454,
+        "CV_Mean_R2": 0.9456149404659776,
+        "CV_Std_R2": 0.0736864493928095
     },
-    "training_date": "2026-07-07 18:54:53",
+    "training_date": "2026-08-01 18:46:31",
     "project_version": "1.1.0"
 }
