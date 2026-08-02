@@ -6,7 +6,7 @@ A full-stack Machine Learning application for real-time Air Quality Monitoring a
 
 - **Frontend:** https://atmos-insights-eh8e.vercel.app
 - **Backend API:** https://atmos-insight-ml.onrender.com/
-- **API Documentation:** https://atmos-insights.onrender.com/docs
+- **API Documentation:** https://atmos-insight-ml.onrender.com/docs
 
 ---
 
