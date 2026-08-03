@@ -21,6 +21,9 @@ import {
   SeasonalAqiItem,
   ShapExplainability,
 } from "@/services/analyticsService";
+import { API_BASE_URL } from "@/services/api";
+
+const BACKEND_URL = API_BASE_URL.replace("/api", "");
 
 const pollutantColors: Record<string, string> = {
   "PM2.5": "#10b981",
@@ -274,7 +277,8 @@ export function Analytics() {
                         alt="SHAP Summary Plot"
                         className="max-h-72 w-full object-contain transition-transform duration-300 hover:scale-[1.02]"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "http://localhost:8000/static/shap/shap_summary_plot.png";
+                         (e.target as HTMLImageElement).src =
+                                   `${BACKEND_URL}/static/shap/shap_summary_plot.png`;
                         }}
                       />
                     </div>
@@ -291,7 +295,8 @@ export function Analytics() {
                         alt="Global Feature Importance"
                         className="max-h-72 w-full object-contain transition-transform duration-300 hover:scale-[1.02]"
                         onError={(e) => {
-                          (e.target as HTMLImageElement).src = "http://localhost:8000/static/shap/global_feature_importance.png";
+                          (e.target as HTMLImageElement).src =
+                                    `${BACKEND_URL}/static/shap/global_feature_importance.png`;
                         }}
                       />
                     </div>
