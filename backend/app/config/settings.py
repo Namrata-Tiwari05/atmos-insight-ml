@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     
     # 3. CORS Allowed Origins
    # pyrefly: ignore [parse-error]
-   CORS_ORIGINS: list[str] = [
+    CORS_ORIGINS: list[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:5173",
@@ -22,8 +22,9 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5174",
         "http://localhost:5175",
         "http://127.0.0.1:5175",
-        "https://atmos-insight-ml-gcwy.vercel.app"
-]
+        "https://atmos-insight-ml-gcwy.vercel.app",
+    ]
+
     # 4. OpenWeatherMap Integrations
     OPENWEATHER_API_KEY: str
     LATITUDE: float = 26.4499  # Default Kanpur
